@@ -1,0 +1,28 @@
+<form [formGroup]="registerForm" (submit)="registerForm.valid && submit($event)">
+  <label>
+    First name:
+    <input type="text" formControlName="firstName" />
+  </label>
+
+  <label>
+    Last name:
+    <input type="text" formControlName="lastName" />
+  </label>
+
+  <label>
+    Username:
+    <input type="text" formControlName="username" />
+  </label>
+
+  <label>
+    Password:
+    <input type="text" formControlName="password" />
+  </label>
+
+  <label>
+    Confirm password:
+    <input type="text" formControlName="confirmPassword" />
+  </label>
+
+  <button type="submit">Register</button>
+</form>
