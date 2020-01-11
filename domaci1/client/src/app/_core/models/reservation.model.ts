@@ -7,6 +7,7 @@ export interface Reservation{
     user?: User;
     flightId: string;
     flight?: Flight;
+    companyId: string;
     seatType: SeatType;
     approved: boolean;
 }

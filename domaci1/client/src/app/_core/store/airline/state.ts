@@ -16,12 +16,10 @@ import { Reservation } from "@models/reservation.model";
 
 export interface AirlineState {
   companies: Company[];
-  flights: Flight[];
 }
 
 const initialState: AirlineState = {
-  companies: [],
-  flights: []
+  companies: []
 };
 
 @State<AirlineState>({ name: "auth", defaults: initialState })
@@ -50,38 +48,23 @@ export class AuthStateManager {
     );
   }
 
-  @Action(AirlineActions.GetFlights)
-  getFlights(
-    ctx: StateContext<AirlineState>,
-    action: AirlineActions.GetFlights
-  ) {
-    const state = ctx.getState();
-    return this.airline.getFlights(action.filters).pipe(
-      map(res => {
-        if (res) {
-          return ctx.setState({
-            ...state,
-            flights: res
-          });
-        }
-      }),
-      catchError(err => {
-        console.error(err);
-        return of(err);
-      })
-    );
-  }
-
   @Action(AirlineActions.Reserve)
   reserve(ctx: StateContext<AirlineState>, action: AirlineActions.Reserve) {
     return this.airline.reserve(action.flight).pipe(
       map(res => {
         if (res) {
           return ctx.setState(
-            patch({
-              flights: updateItem<Flight>(
-                x => x.flightId == res.flightId,
-                patch<Flight>({ reservations: insertItem<Reservation>(res) })
+            patch<AirlineState>({
+              companies: updateItem<Company>(
+                x => x.companyId == res.companyId,
+                patch<Company>({
+                  flights: updateItem<Flight>(
+                    x => x.flightId == res.flightId,
+                    patch<Flight>({
+                      reservations: insertItem<Reservation>(res)
+                    })
+                  )
+                })
               )
             })
           );

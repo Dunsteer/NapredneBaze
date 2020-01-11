@@ -7,7 +7,7 @@ import { AppComponent } from "./app.component";
 
 import { NgxsModule } from "@ngxs/store";
 import { AppState } from "./app.state";
-import { RegisterComponent } from "./_features/register/register/register.component";
+import { RegisterComponent } from "./_features/register/register.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ReactiveFormsModule } from "@angular/forms";
 
