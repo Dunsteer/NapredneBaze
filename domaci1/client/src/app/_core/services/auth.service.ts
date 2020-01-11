@@ -11,8 +11,17 @@ export class AuthService {
   constructor(private _http: HttpClient) {}
 
   register(user: User): Observable<User> {
-    console.log("SERVICE", user);
-    //return this._http.post<User>(`${environment.serverUrl}/auth`, user);
+    // return this._http.post<User>(`${environment.serverUrl}/auth/register`, user);
     return of(user);
+  }
+
+  login(user: User): Observable<User> {
+    // return this._http.post<User>(`${environment.serverUrl}/auth/login`, user);
+    return of(user);
+  }
+
+  check(token: string): Observable<User> {
+    // return this._http.post<User>(`${environment.serverUrl}/auth/check`, token);
+    return of({});
   }
 }
