@@ -5,4 +5,14 @@ export namespace AuthActions {
     static readonly type = "[AUTH] Register";
     constructor(public user: User) {}
   }
+
+  export class Login {
+    static readonly type = "[AUTH] Login";
+    constructor(public user: User) {}
+  }
+
+  export class Check {
+    static readonly type = "[AUTH] Check";
+    constructor(public token: string) {}
+  }
 }

@@ -3,9 +3,10 @@ import { AuthService } from "@services/auth.service";
 import { AuthActions } from "./actions";
 import { map, catchError } from "rxjs/operators";
 import { of } from "rxjs";
+import { User } from '@models/user.model';
 
 export interface AuthState {
-  user: any;
+  user: User;
 }
 
 @State<AuthState>({ name: "auth", defaults: { user: null } })
@@ -16,6 +17,44 @@ export class AuthStateManager {
   register(ctx: StateContext<AuthState>, action: AuthActions.Register) {
     const state = ctx.getState();
     return this.auth.register(action.user).pipe(
+      map(res => {
+        if (res) {
+          return ctx.setState({
+            ...state,
+            user: res
+          });
+        }
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(err);
+      })
+    );
+  }
+
+  @Action(AuthActions.Login)
+  login(ctx: StateContext<AuthState>, action: AuthActions.Login) {
+    const state = ctx.getState();
+    return this.auth.login(action.user).pipe(
+      map(res => {
+        if (res) {
+          return ctx.setState({
+            ...state,
+            user: res
+          });
+        }
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(err);
+      })
+    );
+  }
+
+  @Action(AuthActions.Check)
+  check(ctx: StateContext<AuthState>, action: AuthActions.Check) {
+    const state = ctx.getState();
+    return this.auth.check(action.token).pipe(
       map(res => {
         if (res) {
           return ctx.setState({
