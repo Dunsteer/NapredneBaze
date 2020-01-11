@@ -74,7 +74,6 @@ export class AuthStateManager {
 
   @Action(AirlineActions.Reserve)
   reserve(ctx: StateContext<AirlineState>, action: AirlineActions.Reserve) {
-    const state = ctx.getState();
     return this.airline.reserve(action.flight).pipe(
       map(res => {
         if (res) {

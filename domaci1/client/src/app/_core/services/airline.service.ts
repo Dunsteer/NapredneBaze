@@ -27,10 +27,4 @@ export class AirlineService {
     // return this._http.post<Reservation>(`${environment.serverUrl}/airline/reservation`, flight); // or flight.flightId
     return of(null);
   }
-
-  getReservations(filters: Reservation): Observable<Reservation[]> {
-    // return this._http.get<Reservation[]>(`${environment.serverUrl}/airline/reservation`, filters);
-    return of(null);
-  }
-
 }

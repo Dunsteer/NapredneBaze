@@ -18,9 +18,4 @@ export namespace AirlineActions {
     static readonly type = "[AIRLINE] Reserve";
     constructor(public flight: Flight) {}
   }
-
-  export class GetReservations {
-    static readonly type = "[AIRLINE] Get reservations";
-    constructor(public filters: Reservation) {}
-  }
 }
