@@ -11,5 +11,4 @@ export interface Flight{
     from: string;
     to: string;
     time: Date;
-    reservations: Reservation[]
 }

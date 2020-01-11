@@ -3,7 +3,9 @@ import { AuthService } from "@services/auth.service";
 import { AuthActions } from "./actions";
 import { map, catchError } from "rxjs/operators";
 import { of } from "rxjs";
-import { User } from '@models/user.model';
+import { User } from "@models/user.model";
+import { patch, updateItem, insertItem } from "@ngxs/store/operators";
+import { Reservation } from "@models/reservation.model";
 
 export interface AuthState {
   user: User;
@@ -66,6 +68,37 @@ export class AuthStateManager {
       catchError(err => {
         console.error(err);
         return of(err);
+      })
+    );
+  }
+
+  @Action(AuthActions.AddReservation)
+  addReservation(
+    ctx: StateContext<AuthState>,
+    action: AuthActions.AddReservation
+  ) {
+    return ctx.setState(
+      patch<AuthState>({
+        user: patch<User>({
+          reservations: insertItem<Reservation>(action.reservation)
+        })
+      })
+    );
+  }
+
+  @Action(AuthActions.ApproveReservation)
+  approveReservation(
+    ctx: StateContext<AuthState>,
+    action: AuthActions.ApproveReservation
+  ) {
+    return ctx.setState(
+      patch<AuthState>({
+        user: patch<User>({
+          reservations: updateItem<Reservation>(
+            x => x.reservationId == action.reservationId,
+            patch<Reservation>({ approved: true })
+          )
+        })
       })
     );
   }

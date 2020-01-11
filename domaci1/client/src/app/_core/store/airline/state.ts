@@ -13,6 +13,7 @@ import {
   updateItem
 } from "@ngxs/store/operators";
 import { Reservation } from "@models/reservation.model";
+import { AuthActions } from '@store/auth/actions';
 
 export interface AirlineState {
   companies: Company[];
@@ -53,21 +54,7 @@ export class AuthStateManager {
     return this.airline.reserve(action.flight).pipe(
       map(res => {
         if (res) {
-          return ctx.setState(
-            patch<AirlineState>({
-              companies: updateItem<Company>(
-                x => x.companyId == res.companyId,
-                patch<Company>({
-                  flights: updateItem<Flight>(
-                    x => x.flightId == res.flightId,
-                    patch<Flight>({
-                      reservations: insertItem<Reservation>(res)
-                    })
-                  )
-                })
-              )
-            })
-          );
+          ctx.dispatch(new AuthActions.AddReservation(res));
         }
       }),
       catchError(err => {

@@ -3,6 +3,7 @@ import { SeatType } from './seat-configuration.model';
 import { Flight } from './flight.model';
 
 export interface Reservation{
+    reservationId: string;
     userId: string;
     user?: User;
     flightId: string;
