@@ -8,20 +8,20 @@ import { Observable, of } from "rxjs";
   providedIn: "root"
 })
 export class AuthService {
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient) { }
 
   register(user: User): Observable<User> {
-    // return this._http.post<User>(`${environment.serverUrl}/auth/register`, user);
+    // return this._http.post<User>(`${environment.serverUrl}/api/authentification/register`, user);
     return of(user);
   }
 
   login(user: User): Observable<User> {
-    // return this._http.post<User>(`${environment.serverUrl}/auth/login`, user);
+    // return this._http.post<User>(`${environment.serverUrl}/api/authentification/login`, user);
     return of(user);
   }
 
   check(token: string): Observable<User> {
-    // return this._http.post<User>(`${environment.serverUrl}/auth/check`, token);
+    // return this._http.post<User>(`${environment.serverUrl}/api/authentification/check`, token);
     return of({});
   }
 }

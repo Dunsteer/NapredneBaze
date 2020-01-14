@@ -7,20 +7,20 @@ const User = require('../models/user');
 
 export abstract class BaseController {
     private _router: express.Router;
-    constructor(){
+    constructor() {
         this._router = express.Router();
         this.bindToRouter();
     }
-    
+
     public get router() {
         return this._router;
     }
 
     protected abstract bindToRouter();
 
-    protected getToken(user: IUser) {
+    protected getToken(user: any) {
         let payload = {
-            subject: user._id
+            subject: user.u.properties.username
         }
         return jwt.sign(payload, 'secretKey');
     }
