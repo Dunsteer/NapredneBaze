@@ -6,6 +6,7 @@ import { Observable, of } from "rxjs";
 import { Company } from "@models/company.model";
 import { Flight } from "@models/flight.model";
 import { Reservation } from "@models/reservation.model";
+import { SeatType } from '@models/seat-configuration.model';
 
 @Injectable({
   providedIn: "root"
@@ -18,7 +19,7 @@ export class AirlineService {
     return of(null);
   }
   
-  reserve(flight: Flight): Observable<Reservation> {
+  reserve(flight: Flight, seatType: SeatType): Observable<Reservation> {
     // return this._http.post<Reservation>(`${environment.serverUrl}/airline/reservation`, flight); // or flight.flightId
     return of(null);
   }

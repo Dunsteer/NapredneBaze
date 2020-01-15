@@ -1,0 +1,16 @@
+<form [formGroup]="filterForm" #form="ngForm" (submit)="filterForm.valid && submit(form)">
+  <label>
+    Name:
+    <input type="text" formControlName="name" />
+  </label>
+
+  <button type="submit">Search</button>
+</form>
+
+<div *ngFor="let company of companies$ | async" style="margin-left: 20px">
+  {{company.name}}
+  <button (click)="selectedCompany = company">Show flights</button>
+</div>
+
+Flights:
+<app-flights [company]="selectedCompany"></app-flights>

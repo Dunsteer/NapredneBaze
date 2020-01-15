@@ -1,4 +1,4 @@
-import { State, Action, StateContext } from "@ngxs/store";
+import { State, Action, StateContext, Selector } from "@ngxs/store";
 import { AuthService } from "@services/auth.service";
 import { AuthActions } from "./actions";
 import { map, catchError } from "rxjs/operators";
@@ -6,12 +6,24 @@ import { of } from "rxjs";
 import { User } from "@models/user.model";
 import { patch, updateItem, insertItem } from "@ngxs/store/operators";
 import { Reservation } from "@models/reservation.model";
+import { eUserRank } from "../../enumerators/user-rank.enum";
 
 export interface AuthState {
   user: User;
 }
 
-@State<AuthState>({ name: "auth", defaults: { user: null } })
+const initialState: AuthState = {
+  user: {
+    firstName: "Test",
+    lastName: "User",
+    passportId: "111222333",
+    rank: eUserRank.basic,
+    reservations: [],
+    username: "test"
+  }
+};
+
+@State<AuthState>({ name: "auth", defaults: initialState })
 export class AuthStateManager {
   constructor(private auth: AuthService) {}
 
@@ -101,5 +113,15 @@ export class AuthStateManager {
         })
       })
     );
+  }
+  
+  @Selector()
+  static state(state: AuthState) {
+    return state;
+  }
+
+  @Selector()
+  static user(state: AuthState) {
+    return state.user;
   }
 }
