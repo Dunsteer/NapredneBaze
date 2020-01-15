@@ -1,6 +1,7 @@
 import express = require('express');
 
 import AuthentificationController from './authentification';
+import CompanyController from './company';
 const router = express.Router();
 const chalk = require('chalk');
 
@@ -37,6 +38,7 @@ router.get('/', (req: any, res: any) => {
 });
 
 router.use('/authentification', new AuthentificationController().router);
+router.use('/companies', new CompanyController().router);
 router.use('/users', user);
 
 
