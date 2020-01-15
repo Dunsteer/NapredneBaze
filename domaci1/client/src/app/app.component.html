@@ -1,1 +1,9 @@
-{{ title }} <router-outlet></router-outlet>
+ <div *ngIf="user$|async as user;else noUser">
+     <span style="margin-right: 150px;">{{ title }}</span> {{user.firstName}} {{user.lastName}} ({{user.username}})
+     <br>
+     <hr>
+     <router-outlet></router-outlet>
+</div>
+ <ng-template #noUser>Please login!</ng-template>
+
+

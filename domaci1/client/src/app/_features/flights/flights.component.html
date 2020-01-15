@@ -1,0 +1,37 @@
+<div *ngIf="company; else noCompany">
+  <form
+    [formGroup]="filterForm"
+    #form="ngForm"
+    (submit)="filterForm.valid && submit(form, $event)"
+  >
+    <label>
+      From:
+      <input type="text" formControlName="from" />
+    </label>
+
+    <label>
+      To:
+      <input type="text" formControlName="to" />
+    </label>
+
+    <label>
+      Time:
+      <input type="datetime" formControlName="time" />
+    </label>
+
+    <button type="submit">Search</button>
+  </form>
+
+  <div *ngFor="let flight of flights" style="margin-left: 20px">
+    {{ flight.from }} - {{ flight.from }} @ {{ flight.time.toString() }}
+    <button
+      *ngFor="let seatKV of flight.airplane.seatConfiguration | keyvalue"
+      (click)="reserve(flight, seatKV.key)"
+    >
+      Reserve {{ seatKV.key }} ({{ seatKV.value.taken }}/{{ seatKV.value.number }})
+    </button>
+  </div>
+</div>
+<ng-template #noCompany>
+  Nothing selected.
+</ng-template>

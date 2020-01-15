@@ -1,4 +1,4 @@
-import { State, Action, StateContext } from "@ngxs/store";
+import { State, Action, StateContext, Selector } from "@ngxs/store";
 import { AirlineService } from "@services/airline.service";
 import { AirlineActions } from "./actions";
 import { map, catchError } from "rxjs/operators";
@@ -13,18 +13,43 @@ import {
   updateItem
 } from "@ngxs/store/operators";
 import { Reservation } from "@models/reservation.model";
-import { AuthActions } from '@store/auth/actions';
+import { AuthActions } from "@store/auth/actions";
 
 export interface AirlineState {
   companies: Company[];
 }
 
 const initialState: AirlineState = {
-  companies: []
+  companies: [
+    {
+      name: "first",
+      flights: [
+        {
+          from: "a",
+          to: "a",
+          time: new Date(),
+          airplaneId: "1",
+          companyId: "1",
+          airplane: {
+            name: "airplane",
+            companyId: "1",
+            seatConfiguration: {
+              firstClass: { number: 5, taken: 0 },
+              businessClass: { number: 0, taken: 0 },
+              economyClass: { number: 0, taken: 0 }
+            }
+          }
+        }
+      ],
+      companyId: "1"
+    },
+    { name: "second", flights: [], companyId: "2" },
+    { name: "third", flights: [], companyId: "3" }
+  ]
 };
 
-@State<AirlineState>({ name: "auth", defaults: initialState })
-export class AuthStateManager {
+@State<AirlineState>({ name: "airline", defaults: initialState })
+export class AirlineStateManager {
   constructor(private airline: AirlineService) {}
 
   @Action(AirlineActions.GetCompanies)
@@ -51,7 +76,7 @@ export class AuthStateManager {
 
   @Action(AirlineActions.Reserve)
   reserve(ctx: StateContext<AirlineState>, action: AirlineActions.Reserve) {
-    return this.airline.reserve(action.flight).pipe(
+    return this.airline.reserve(action.flight, action.seatType).pipe(
       map(res => {
         if (res) {
           ctx.dispatch(new AuthActions.AddReservation(res));
@@ -62,5 +87,15 @@ export class AuthStateManager {
         return of(err);
       })
     );
+  }
+
+  @Selector()
+  static state(state: AirlineState) {
+    return state;
+  }
+
+  @Selector()
+  static companies(state: AirlineState) {
+    return state.companies;
   }
 }
