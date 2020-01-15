@@ -113,3 +113,6 @@ export default class AuthenticationController extends BaseController {
         }
     }
 }
+// MATCH (a:airplane)
+// WHERE id(a) = 42
+// return a
