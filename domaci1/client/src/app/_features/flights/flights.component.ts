@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from "@angular/core";
 import { FormGroup, FormControl, NgForm } from "@angular/forms";
 import { BaseComponent } from "src/app/_core/components/base.component";
 import { Store, Select } from "@ngxs/store";
@@ -14,7 +14,7 @@ import { SeatType } from "@models/seat-configuration.model";
   templateUrl: "./flights.component.html",
   styleUrls: ["./flights.component.scss"]
 })
-export class FlightsComponent extends BaseComponent implements OnInit {
+export class FlightsComponent extends BaseComponent implements OnInit, OnChanges {
   filterForm: FormGroup;
   @Input() company: Company;
   flights: Flight[];
@@ -43,28 +43,43 @@ export class FlightsComponent extends BaseComponent implements OnInit {
     });
   }
 
-  reserve(flight: Flight, seatType: SeatType) {
-    this._store.dispatch(new AirlineActions.Reserve(flight, seatType));
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['company']) {
+      if (this.company) {
+        this.filterCompanyFlights();
+      }
+    }
+  }
+
+  reserve(seatsId: number) {
+    this._store.dispatch(new AirlineActions.Reserve(seatsId));
   }
 
   submit(form: NgForm, e) {
-    //e.preventDefault();
-    this.flights = this.company.flights.filter(x => {
-      let timeFrom;
-      let timeTo;
-      if (this.time.value) {
-        timeFrom = this.time.value as Date;
-        timeTo = this.time.value as Date;
+    // e.preventDefault();
+    this.filterCompanyFlights();
+  }
 
-        timeFrom.setHours(timeFrom.getHours() - 1);
-        timeTo.setHours(timeTo.getHours() + 1);
+  filterCompanyFlights() {
+    this.flights = this.company.flights.filter(x => {
+      let timeFrom: Date;
+      let timeTo: Date;
+
+      if (this.time.value) {
+        timeFrom = new Date(this.time.value);
+        timeTo = new Date(this.time.value);
+        timeFrom.setHours(0);
+        timeFrom.setMinutes(0);
+        timeTo.setHours(23);
+        timeTo.setMinutes(59);
+        x.time = new Date(x.time);
       }
-      console.log(this.filterForm.value);
+
       let ret =
-        (this.from.value == "" || x.from == this.from.value) &&
-        (this.to.value == "" || x.to == this.to.value) &&
-        (!this.time.value || (x.time <= timeFrom && x.time >= timeTo));
-      console.log(ret);
+        (this.from.value == "" || x.from.toLowerCase() == this.from.value.toLowerCase()) &&
+        (this.to.value == "" || x.to.toLowerCase() == this.to.value.toLowerCase()) &&
+        (!this.time.value || (x.time >= timeFrom && x.time <= timeTo));
+
       return ret;
     });
   }

@@ -21,37 +21,12 @@ export interface AirlineState {
 }
 
 const initialState: AirlineState = {
-  companies: [
-    {
-      name: "first",
-      flights: [
-        {
-          from: "a",
-          to: "a",
-          time: new Date(),
-          airplaneId: "1",
-          companyId: "1",
-          airplane: {
-            name: "airplane",
-            companyId: "1",
-            seatConfiguration: {
-              firstClass: { number: 5, taken: 0 },
-              businessClass: { number: 0, taken: 0 },
-              economyClass: { number: 0, taken: 0 }
-            }
-          }
-        }
-      ],
-      companyId: "1"
-    },
-    { name: "second", flights: [], companyId: "2" },
-    { name: "third", flights: [], companyId: "3" }
-  ]
+  companies: []
 };
 
 @State<AirlineState>({ name: "airline", defaults: initialState })
 export class AirlineStateManager {
-  constructor(private airline: AirlineService) {}
+  constructor(private airline: AirlineService) { }
 
   @Action(AirlineActions.GetCompanies)
   getCompanies(
@@ -64,7 +39,7 @@ export class AirlineStateManager {
         if (res) {
           return ctx.setState({
             ...state,
-            companies: this.mapN4J(res)
+            companies: res
           });
         }
       }),
@@ -77,7 +52,7 @@ export class AirlineStateManager {
 
   @Action(AirlineActions.Reserve)
   reserve(ctx: StateContext<AirlineState>, action: AirlineActions.Reserve) {
-    return this.airline.reserve(action.flight, action.seatType).pipe(
+    return this.airline.reserve(action.seatsId).pipe(
       map(res => {
         if (res) {
           ctx.dispatch(new AuthActions.AddReservation(res));
@@ -100,19 +75,19 @@ export class AirlineStateManager {
     return state.companies;
   }
 
-  mapN4J(input){
-    function walker(obj){
+  mapN4J(input) {
+    function walker(obj) {
       const keys = Object.keys(obj);
 
-      keys.forEach(k=>{
-        if(typeof(obj[k]) == 'object'){
-          if(neo4j.isInt(obj[k])){
-            obj[k] = neo4j.integer.toNumber(obj[k]); 
+      keys.forEach(k => {
+        if (typeof (obj[k]) == 'object') {
+          if (neo4j.isInt(obj[k])) {
+            obj[k] = neo4j.integer.toNumber(obj[k]);
 
             return;
           }
-          
-          if(neo4j.isDateTime(obj[k])){
+
+          if (neo4j.isDateTime(obj[k])) {
             obj[k] = new Date(obj[k].year,
               obj[k].month,
               obj[k].day,
@@ -123,8 +98,8 @@ export class AirlineStateManager {
             return;
           }
 
-          if(Array.isArray(obj[k])){
-            obj[k] = obj[k].map(x=>{
+          if (Array.isArray(obj[k])) {
+            obj[k] = obj[k].map(x => {
               return walker(x);
             })
 
@@ -132,7 +107,7 @@ export class AirlineStateManager {
           }
 
           return walker(obj[k]);
-          
+
         }
       });
 

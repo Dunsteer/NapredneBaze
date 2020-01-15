@@ -19,8 +19,9 @@ export abstract class BaseController {
     protected abstract bindToRouter();
 
     protected getToken(user: any) {
+        debugger;
         let payload = {
-            subject: user.u.properties.username
+            subject: user.u.identity.low
         }
         return jwt.sign(payload, 'secretKey');
     }

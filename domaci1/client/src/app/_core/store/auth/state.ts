@@ -7,25 +7,19 @@ import { User } from "@models/user.model";
 import { patch, updateItem, insertItem } from "@ngxs/store/operators";
 import { Reservation } from "@models/reservation.model";
 import { eUserRank } from "../../enumerators/user-rank.enum";
+import { CookieService } from 'ngx-cookie-service';
 
 export interface AuthState {
   user: User;
 }
 
 const initialState: AuthState = {
-  user: {
-    firstName: "Test",
-    lastName: "User",
-    passportId: "111222333",
-    rank: eUserRank.basic,
-    reservations: [],
-    username: "test"
-  }
+  user: null
 };
 
 @State<AuthState>({ name: "auth", defaults: initialState })
 export class AuthStateManager {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private _cookie: CookieService) { }
 
   @Action(AuthActions.Register)
   register(ctx: StateContext<AuthState>, action: AuthActions.Register) {
@@ -33,10 +27,12 @@ export class AuthStateManager {
     return this.auth.register(action.user).pipe(
       map(res => {
         if (res) {
-          return ctx.setState({
-            ...state,
-            user: res
-          });
+          ctx.dispatch(new AuthActions.Check(res.token));
+          this._cookie.set('token', res.token);
+          // return ctx.setState({
+          //   ...state,
+          //   user: res
+          // });
         }
       }),
       catchError(err => {
@@ -52,9 +48,10 @@ export class AuthStateManager {
     return this.auth.login(action.user).pipe(
       map(res => {
         if (res) {
+          this._cookie.set('token', res.token);
           return ctx.setState({
             ...state,
-            user: res
+            user: res.user
           });
         }
       }),
@@ -73,7 +70,7 @@ export class AuthStateManager {
         if (res) {
           return ctx.setState({
             ...state,
-            user: res
+            user: res.user
           });
         }
       }),
@@ -82,6 +79,11 @@ export class AuthStateManager {
         return of(err);
       })
     );
+  }
+
+  @Action(AuthActions.Logout)
+  logout(ctx: StateContext<AuthState>, action: AuthActions.Logout) {
+    return ctx.setState({ user: null });
   }
 
   @Action(AuthActions.AddReservation)
@@ -114,7 +116,7 @@ export class AuthStateManager {
       })
     );
   }
-  
+
   @Selector()
   static state(state: AuthState) {
     return state;

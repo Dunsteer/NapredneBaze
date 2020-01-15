@@ -8,6 +8,13 @@ import { userHelper } from '../helpers/userHelper'
 import { BaseController } from './baseController';
 import { IUser } from '../models/user';
 import { IRequest } from '../helpers/request';
+import { authorizationHelper } from '../helpers/authorization';
+
+import { PubsubManager } from 'redis-messaging-manager';
+
+let messenger = new PubsubManager({
+    host: 'localhost'
+});
 
 import * as neo4j from 'neo4j-driver';
 
@@ -19,15 +26,18 @@ export default class CompanyController extends BaseController {
 
     constructor() {
         super();
+
     }
 
     protected bindToRouter() {
         this.router.get('/', this.get.bind(this));
+        this.router.post('/reserve', this.reservePost.bind(this));
     }
 
     protected async get(req: express.Request, res: express.Response) {
         try {
-            let userData = req.body;
+            const name = req.query.name;
+            console.log(req.query);
 
             const session = driver.session();
 
@@ -56,15 +66,19 @@ export default class CompanyController extends BaseController {
                 let ret = {
                     ...(obj.value), flights: obj.value.organizes.map(f => {
                         const obj = {
-                            ...f, airplanes: f.flies.map(a => {
+                            ...f, airplane: f.flies.map(a => {
                                 const obj = {
-                                    ...a, seatConfiguration: a.seatconfiguration.reduce((acc, x) => { acc[x.type] = x; return acc; }, {})
+                                    ...a, seatConfiguration: a.seatconfiguration.reduce((acc, x) => {
+                                        acc[x.type] = x;
+                                        x.type = undefined;
+                                        return acc;
+                                    }, {})
                                 }
 
                                 obj.seatconfiguration = undefined;
 
                                 return obj;
-                            })
+                            })[0]
                         };
                         obj.flies = undefined;
                         return obj;
@@ -75,9 +89,9 @@ export default class CompanyController extends BaseController {
 
                 return ret;
 
-            });
+            }).filter(x => !name || x.name.toLowerCase().includes(name.toLowerCase()));
 
-            this.removeHigh(test);
+            this.mapN4J(test);
 
             res.send(test);
 
@@ -96,37 +110,56 @@ export default class CompanyController extends BaseController {
         }
     }
 
-    transformIntegers(result) {
-        return new Promise((resolve, reject) => {
-            try {
-                result.records.forEach(function (row, i) {
-                    row._fields.forEach(function (val, j) {
-                        result.records[i]._fields[j] = (val.low != null || val.low != undefined)
-                            ? (neo4j.integer.inSafeRange(val) ? val.toNumber() : val.toString())
-                            : val;
-                    })
-                })
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    };
+    protected async reservePost(req: express.Request, res: express.Response) {
 
-    private removeHigh(obj) {
-        if (typeof (obj) != "object") {
-            return obj;
-        } else {
-            Object.keys(obj).map(key => {
-                if (typeof (obj[key]) != "object") {
-                    if (obj[key].low != null || obj[key].low != undefined) {
-                        obj[key] = obj[key].low;
+        if (!req.headers.authorization) {
+            return res.status(401).send('Unauthorized request.');
+        }
+
+        let token = req.headers.authorization.split(' ')[1];
+        let payload = jwt.verify(token, 'secretKey');
+        console.log(payload);
+
+        messenger.publish("reservations", JSON.stringify({ ...req.body, userId: payload.subject }));
+
+        return res.send({ message: "Successfully sent." });
+    }
+
+    mapN4J(input) {
+        function walker(obj) {
+            const keys = Object.keys(obj);
+
+            keys.map(k => {
+                if (typeof (obj[k]) == 'object') {
+                    obj[`${obj['_type']}Id`] = obj["_id"];
+
+                    if (neo4j.isInt(obj[k])) {
+                        obj[k] = neo4j.integer.toNumber(obj[k]);
                     } else {
-                        this.removeHigh(obj[key]);
+                        if (neo4j.isDateTime(obj[k])) {
+                            obj[k] = new Date(obj[k].year,
+                                obj[k].month,
+                                obj[k].day,
+                                obj[k].hour,
+                                obj[k].minute,
+                                obj[k].second)
+                        } else {
+                            if (Array.isArray(obj[k])) {
+                                obj[k] = obj[k].map(x => {
+                                    return walker(x);
+                                })
+                            } else {
+                                return walker(obj[k]);
+                            }
+                        }
                     }
                 }
             });
+
+            return obj;
         }
+
+        return walker(input);
     }
 }
 

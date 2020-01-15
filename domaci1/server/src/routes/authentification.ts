@@ -95,10 +95,10 @@ export default class AuthenticationController extends BaseController {
             debugger;
             let userData = req.body;
 
-            const username = jwt.decode(userData.token).subject;
+            const userId = parseInt(jwt.decode(userData.token).subject);
 
             const session = driver.session();
-            const user = await session.run(`match(u:user {username:"${username}"}) return u`);
+            const user = await session.run(`match(u:user) where id(u)=${userId} return u`);
 
             if (user.records.length == 0) {
                 res.status(400).send('Invalid token.');

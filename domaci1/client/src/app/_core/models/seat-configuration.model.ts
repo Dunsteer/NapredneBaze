@@ -2,6 +2,7 @@ export type SeatConfiguration = {
   [key in SeatType]: {
     number: number;
     taken: number;
+    seatsId: number;
   };
 };
 

@@ -7,11 +7,11 @@ import { SeatType } from '@models/seat-configuration.model';
 export namespace AirlineActions {
   export class GetCompanies {
     static readonly type = "[AIRLINE] Get companies";
-    constructor(public filters: Company) {}
+    constructor(public filters: Company) { }
   }
 
   export class Reserve {
     static readonly type = "[AIRLINE] Reserve";
-    constructor(public flight: Flight, public seatType: SeatType) {}
+    constructor(public seatsId: number) { }
   }
 }

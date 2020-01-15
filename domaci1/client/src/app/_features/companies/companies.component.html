@@ -1,16 +1,19 @@
-<form [formGroup]="filterForm" #form="ngForm" (submit)="filterForm.valid && submit(form)">
-  <label>
-    Name:
-    <input type="text" formControlName="name" />
-  </label>
+<div *ngIf="true; else noUser">Companies:
+  <form [formGroup]="filterForm" #form="ngForm" (submit)="filterForm.valid && submit(form)">
+    <label>
+      Name:
+      <input type="text" formControlName="name" />
+    </label>
 
-  <button type="submit">Search</button>
-</form>
+    <button type="submit">Search</button>
+  </form>
 
-<div *ngFor="let company of companies$ | async" style="margin-left: 20px">
-  {{company.name}}
-  <button (click)="selectedCompany = company">Show flights</button>
+  <div *ngFor="let company of companies$ | async" style="margin-left: 20px">
+    {{company.name}}
+    <button (click)="selectedCompany = company">Show flights</button>
+  </div>
+
+  Flights:
+  <app-flights [company]="selectedCompany"></app-flights>
 </div>
-
-Flights:
-<app-flights [company]="selectedCompany"></app-flights>
+<ng-template #noUser>Please <a routerLink='/login'>login!</a></ng-template>
