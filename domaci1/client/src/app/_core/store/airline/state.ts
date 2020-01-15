@@ -14,6 +14,7 @@ import {
 } from "@ngxs/store/operators";
 import { Reservation } from "@models/reservation.model";
 import { AuthActions } from "@store/auth/actions";
+import * as neo4j from "neo4j-driver";
 
 export interface AirlineState {
   companies: Company[];
@@ -63,7 +64,7 @@ export class AirlineStateManager {
         if (res) {
           return ctx.setState({
             ...state,
-            companies: res
+            companies: this.mapN4J(res)
           });
         }
       }),
@@ -97,5 +98,50 @@ export class AirlineStateManager {
   @Selector()
   static companies(state: AirlineState) {
     return state.companies;
+  }
+
+  mapN4J(input){
+    function walker(obj){
+      const keys = Object.keys(obj);
+
+      keys.forEach(k=>{
+        if(typeof(obj[k]) == 'object'){
+          if(neo4j.isInt(obj[k])){
+            obj[k] = neo4j.integer.toNumber(obj[k]); 
+
+            return;
+          }
+          
+          if(neo4j.isDateTime(obj[k])){
+            obj[k] = new Date(obj[k].year,
+              obj[k].month,
+              obj[k].day,
+              obj[k].hour,
+              obj[k].minute,
+              obj[k].second)
+
+            return;
+          }
+
+          if(Array.isArray(obj[k])){
+            obj[k] = obj[k].map(x=>{
+              return walker(x);
+            })
+
+            return;
+          }
+
+          return walker(obj[k]);
+          
+        }
+      });
+
+      return obj;
+    }
+
+    console.log(input);
+    const output = walker(input);
+    console.log(output);
+    return output;
   }
 }

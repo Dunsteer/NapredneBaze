@@ -23,7 +23,7 @@
   </form>
 
   <div *ngFor="let flight of flights" style="margin-left: 20px">
-    {{ flight.from }} - {{ flight.from }} @ {{ flight.time.toString() }}
+    {{ flight.from }} - {{ flight.to }} @ {{ flight.time.toString() }}
     <button
       *ngFor="let seatKV of flight.airplane.seatConfiguration | keyvalue"
       (click)="reserve(flight, seatKV.key)"
