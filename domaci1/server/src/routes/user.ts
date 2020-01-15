@@ -10,10 +10,6 @@ import { userHelper } from '../helpers/userHelper';
 
 import { driver } from './api';
 
-const multer = require('multer');
-
-const upload = multer({ dest: __dirname + '../../../public/uploads/images' });
-
 router.get('/', async (req, res) => {//da moze svako, ali samo ako da ID, ako je null, da ne dobije sve usere.
     try {
         const session = driver.session();
