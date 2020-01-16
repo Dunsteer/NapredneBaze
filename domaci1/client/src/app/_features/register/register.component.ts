@@ -3,6 +3,7 @@ import { FormGroup, FormControl } from "@angular/forms";
 import { AuthActions } from "@store/auth/actions";
 import { BaseComponent } from "src/app/_core/components/base.component";
 import { Store } from "@ngxs/store";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-register",
@@ -12,7 +13,7 @@ import { Store } from "@ngxs/store";
 export class RegisterComponent extends BaseComponent implements OnInit {
   registerForm: FormGroup;
 
-  constructor(public _store: Store) {
+  constructor(public _store: Store, public _router: Router) {
     super();
   }
 
@@ -48,6 +49,15 @@ export class RegisterComponent extends BaseComponent implements OnInit {
 
   submit(e) {
     //e.preventDefault();
-    this._store.dispatch(new AuthActions.Register(this.registerForm.value));
+    this._store
+      .dispatch(new AuthActions.Register(this.registerForm.value))
+      .subscribe(
+        () => {
+          this._router.navigateByUrl("/companies");
+        },
+        err => {
+          alert(err);
+        }
+      );
   }
 }
