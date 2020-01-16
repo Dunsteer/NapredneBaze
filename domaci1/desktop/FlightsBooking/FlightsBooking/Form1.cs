@@ -16,7 +16,7 @@ namespace FlightsBooking
     {
         public IDatabase db;
         public ISubscriber sub;
-        public int reservationStatus = 0;
+        public List<Reservation> reservations = new List<Reservation>();
         public Form1()
         {
             InitializeComponent();
@@ -28,20 +28,22 @@ namespace FlightsBooking
             sub.Subscribe("reservations", (channel, message) =>
             {
                 var reservation = JsonConvert.DeserializeObject<Reservation>(message);
-                if (reservationStatus % 2 == 0)
-                    reservation.accepted = true;
-                else
-                    reservation.accepted = false;
-
-                reservationStatus++;
-
-                sub.Publish("reservationsResponse", JsonConvert.SerializeObject(reservation));
+                reservations.Add(new Reservation(reservation.seatsId, reservation.userId, false));
             });
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        private void Button1_Click_1(object sender, EventArgs e)
         {
-            sub.Publish("reservationsResponse", "{'greeting': 'hello'}");
+            if(reservations.Count > 0)
+            {
+                if (this.checkBox1.Checked == true)
+                    reservations[0].accepted = true;
+                else
+                    reservations[0].accepted = false;
+
+                sub.Publish("reservationsResponse", JsonConvert.SerializeObject(reservations[0]));
+                reservations.RemoveAt(0);
+            }
         }
     }
 }

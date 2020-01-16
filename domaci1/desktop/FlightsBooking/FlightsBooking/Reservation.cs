@@ -11,5 +11,12 @@ namespace FlightsBooking
         public int seatsId { get; set; }
         public int userId { get; set; }
         public bool accepted { get; set; }
+
+        public Reservation(int seatsId, int userId, bool accepted)
+        {
+            this.seatsId = seatsId;
+            this.userId = userId;
+            this.accepted = accepted;
+        }
     }
 }
