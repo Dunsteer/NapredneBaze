@@ -1,4 +1,10 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  SimpleChanges,
+  OnChanges
+} from "@angular/core";
 import { FormGroup, FormControl, NgForm } from "@angular/forms";
 import { BaseComponent } from "src/app/_core/components/base.component";
 import { Store, Select } from "@ngxs/store";
@@ -14,9 +20,10 @@ import { SeatType } from "@models/seat-configuration.model";
   templateUrl: "./flights.component.html",
   styleUrls: ["./flights.component.scss"]
 })
-export class FlightsComponent extends BaseComponent implements OnInit, OnChanges {
+export class FlightsComponent extends BaseComponent
+  implements OnInit, OnChanges {
   filterForm: FormGroup;
-  @Input() company: Company;
+  @Input() company: Company
   flights: Flight[];
 
   constructor(public _store: Store) {
@@ -44,7 +51,7 @@ export class FlightsComponent extends BaseComponent implements OnInit, OnChanges
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['company']) {
+    if (changes["company"]) {
       if (this.company) {
         this.filterCompanyFlights();
       }
@@ -76,8 +83,10 @@ export class FlightsComponent extends BaseComponent implements OnInit, OnChanges
       }
 
       let ret =
-        (this.from.value == "" || x.from.toLowerCase() == this.from.value.toLowerCase()) &&
-        (this.to.value == "" || x.to.toLowerCase() == this.to.value.toLowerCase()) &&
+        (this.from.value == "" ||
+          x.from.toLowerCase() == this.from.value.toLowerCase()) &&
+        (this.to.value == "" ||
+          x.to.toLowerCase() == this.to.value.toLowerCase()) &&
         (!this.time.value || (x.time >= timeFrom && x.time <= timeTo));
 
       return ret;

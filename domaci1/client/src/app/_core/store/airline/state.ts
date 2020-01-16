@@ -39,7 +39,7 @@ export class AirlineStateManager {
         if (res) {
           return ctx.setState({
             ...state,
-            companies: res
+            companies: this.mapN4J(res)
           });
         }
       }),

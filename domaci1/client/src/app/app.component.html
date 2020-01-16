@@ -1,8 +1,35 @@
-<div *ngIf="user$|async as user; else noUser">
-    <span style="margin-right: 150px;">{{ title }}</span> {{user.firstName}} {{user.lastName}} ({{user.username}})
-    <button style="margin-left:50px" (click)="logout()">Logout</button>
-    <br>
-    <hr>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark text-light">
+  <a class="navbar-brand" routerLink="/">{{ title }}</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarNavAltMarkup"
+    aria-controls="navbarNavAltMarkup"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div
+    class="collapse navbar-collapse d-flex justify-content-between flex-row container"
+    id="navbarNavAltMarkup"
+  >
+    <div class="navbar-nav">
+      <a class="nav-item nav-link" routerLink="/companies">Companies</a>
+    </div>
+    <div class="navbar-nav">
+      <ng-container *ngIf="user$ | async as user; else noUser">
+        {{ user.firstName }} {{ user.lastName }} ({{ user.username }})
+        <button class="nav-item nav-link" (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #noUser>
+        <a class="nav-item nav-link" routerLink="/login">Login</a>
+        <a class="nav-item nav-link" routerLink="/register">Register</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>
+<div class="container border-left border-right py-5 px-4">
+  <router-outlet></router-outlet>
 </div>
-<ng-template #noUser><button routerLink='login'>Login</button></ng-template>
-<router-outlet></router-outlet>

@@ -1,19 +1,31 @@
-<div *ngIf="true; else noUser">Companies:
-  <form [formGroup]="filterForm" #form="ngForm" (submit)="filterForm.valid && submit(form)">
-    <label>
-      Name:
-      <input type="text" formControlName="name" />
+<div>
+  <span class="h5">Companies</span>
+  <form
+    class="mt-5 d-flex justify-content-between"
+    [formGroup]="filterForm"
+    #form="ngForm"
+    (submit)="filterForm.valid && submit(form)"
+  >
+    <label class="d-flex justify-content-start align-items-center">
+      <span class="mr-3">Name:</span>
+      <input type="text" formControlName="name" class="form-control" />
     </label>
 
-    <button type="submit">Search</button>
+    <button class="btn btn-primary" type="submit">Search</button>
   </form>
+  <hr />
 
-  <div *ngFor="let company of companies$ | async" style="margin-left: 20px">
-    {{company.name}}
-    <button (click)="selectedCompany = company">Show flights</button>
+  <div *ngFor="let company of companies$ | async" class="mx-3">
+    <button class="btn btn-secondary mb-2" (click)="selectedCompany = company">
+      {{ company.name }}
+    </button>
   </div>
-
-  Flights:
-  <app-flights [company]="selectedCompany"></app-flights>
+  <div *ngIf="(companies$ | async).length == 0; else flightsFound">
+    No flights found.
+  </div>
+  <ng-template #flightsFound>
+    <hr />
+    <span class="h5">Flights</span>
+    <app-flights [company]="selectedCompany"></app-flights>
+  </ng-template>
 </div>
-<ng-template #noUser>Please <a routerLink='/login'>login!</a></ng-template>

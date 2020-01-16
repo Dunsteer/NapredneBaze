@@ -25,6 +25,7 @@ export class AirlineService {
     if (filters.name) {
       params = params.set('name', filters.name);
     }
+    
     return this._http.get<Company[]>(`${environment.serverUrl}/api/companies`, { params });
     //#region  comm
     // const ret: any[] = [];
@@ -45,7 +46,32 @@ export class AirlineService {
     //         seatConfiguration: {
     //           businessClass: {
     //             number: new neo4j.types.Integer(5, 0),
+    //             taken: new neo4j.types.Integer(5, 0)
+    //           },
+    //           economyClass: {
+    //             number: new neo4j.types.Integer(5, 0),
     //             taken: new neo4j.types.Integer(0, 0)
+    //           },
+    //           firstClass: {
+    //             number: new neo4j.types.Integer(5, 0),
+    //             taken: new neo4j.types.Integer(0, 0)
+    //           }
+    //         }
+    //       }
+    //     }, {
+    //       airplaneId: "asd",
+    //       companyId: "asd",
+    //       from: "X",
+    //       to: "Y",
+    //       time: new neo4j.types.DateTime(1992, 1, 1, 2, 2, 2, 523, 1, ""),
+    //       airplane: {
+    //         companyId: "asd",
+    //         name: "747",
+    //         airplaneId: "asdd",
+    //         seatConfiguration: {
+    //           businessClass: {
+    //             number: new neo4j.types.Integer(5, 0),
+    //             taken: new neo4j.types.Integer(5, 0)
     //           },
     //           economyClass: {
     //             number: new neo4j.types.Integer(5, 0),

@@ -1,30 +1,54 @@
 <div *ngIf="company; else noCompany">
-  <form [formGroup]="filterForm" #form="ngForm" (submit)="filterForm.valid && submit(form, $event)">
-    <label>
-      From:
-      <input type="text" formControlName="from" />
+  <form
+    class="mt-5 d-flex justify-content-between"
+    [formGroup]="filterForm"
+    #form="ngForm"
+    (submit)="filterForm.valid && submit(form, $event)"
+  >
+    <label class="d-flex justify-content-start align-items-center">
+      <span class="mr-3">From:</span>
+      <input type="text" formControlName="from" class="form-control" />
     </label>
 
-    <label>
-      To:
-      <input type="text" formControlName="to" />
+    <label class="d-flex justify-content-start align-items-center">
+      <span class="mr-3">To:</span>
+      <input type="text" formControlName="to" class="form-control" />
     </label>
 
-    <label>
-      Time:
-      <input type="date" formControlName="time" />
+    <label class="d-flex justify-content-start align-items-center">
+      <span class="mr-3">Time:</span>
+      <input type="date" formControlName="time" class="form-control" />
     </label>
 
-    <button type="submit">Search</button>
+    <button class="btn btn-primary" type="submit">Search</button>
   </form>
 
-  <div *ngFor="let flight of flights" style="margin-left: 20px">
-    {{ flight.from }} - {{ flight.to }} @ {{ flight.time.toString() }}
-    <button *ngFor="let seatKV of flight.airplane.seatConfiguration | keyvalue" (click)="reserve(seatKV.value.seatsId)">
-      Reserve {{ seatKV.key }} ({{ seatKV.value.taken }}/{{ seatKV.value.number }})
+  <div *ngFor="let flight of flights" class="my-5 border p-3">
+    <div class="d-flex w-100 justify-content-between">
+      <span class="ml-5">{{ flight.from }} </span>-<span class="mr-5">{{
+        flight.to
+      }}</span>
+    </div>
+    <div class="d-flex justify-content-center my-2">
+      {{ flight.time.toDateString() }} - {{flight.time.toLocaleTimeString()}}
+    </div>
+
+    <button
+      class="btn ml-1 mt-3"
+      [ngClass]="{
+        'btn-success': seatKV.value.number > seatKV.value.taken,
+        'btn-danger': seatKV.value.number <= seatKV.value.taken
+      }"
+      *ngFor="let seatKV of flight.airplane.seatConfiguration | keyvalue"
+      (click)="
+        seatKV.value.number > seatKV.value.taken &&
+          reserve(seatKV.value.seatsId)
+      "
+    >
+      {{ seatKV.key }} ({{ seatKV.value.taken }}/{{ seatKV.value.number }})
     </button>
   </div>
 </div>
 <ng-template #noCompany>
-  Nothing selected.
+  Select a company.
 </ng-template>
