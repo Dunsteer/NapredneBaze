@@ -26,6 +26,6 @@
   <ng-template #flightsFound>
     <hr />
     <span class="h5">Flights</span>
-    <app-flights [company]="selectedCompany"></app-flights>
+    <app-flights [company]="selectedCompany" [user]="user$ | async"></app-flights>
   </ng-template>
 </div>

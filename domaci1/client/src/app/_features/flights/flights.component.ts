@@ -14,6 +14,7 @@ import { Observable } from "rxjs";
 import { Company } from "@models/company.model";
 import { Flight } from "@models/flight.model";
 import { SeatType } from "@models/seat-configuration.model";
+import { User } from '@models/user.model';
 
 @Component({
   selector: "app-flights",
@@ -23,7 +24,8 @@ import { SeatType } from "@models/seat-configuration.model";
 export class FlightsComponent extends BaseComponent
   implements OnInit, OnChanges {
   filterForm: FormGroup;
-  @Input() company: Company
+  @Input() company: Company;
+  @Input() user: User;
   flights: Flight[];
 
   constructor(public _store: Store) {
