@@ -17,10 +17,11 @@ export default messenger;
 
 messenger.consume('reservationsResponse')
     .subscribe(async msg => {
-
+        console.log(msg);
         const resp = JSON.parse(msg);
         console.log("Message received.", resp)
         if (resp.accepted) {
+            debugger;
             const session = driver.session();
             const query = `MATCH (n:seats)
             WHERE id(n)= ${resp.seatsId}
@@ -31,7 +32,7 @@ messenger.consume('reservationsResponse')
             console.log(obj);
         }
 
-        _io.emint('response', msg);
+        _io.emit('response', msg);
     });
 
 // rsmq.createQueue({ qname: "reservations" }, function (err, resp) {

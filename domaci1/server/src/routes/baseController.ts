@@ -19,7 +19,6 @@ export abstract class BaseController {
     protected abstract bindToRouter();
 
     protected getToken(user: any) {
-        debugger;
         let payload = {
             subject: user.u.identity.low
         }

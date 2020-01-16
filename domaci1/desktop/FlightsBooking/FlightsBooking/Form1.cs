@@ -21,7 +21,7 @@ namespace FlightsBooking
         {
             InitializeComponent();
 
-            ConnectionMultiplexer redisConnection = ConnectionMultiplexer.Connect("178.149.200.244:6379");
+            ConnectionMultiplexer redisConnection = ConnectionMultiplexer.Connect("localhost:6379");
             db = redisConnection.GetDatabase();
             sub = redisConnection.GetSubscriber();
 
